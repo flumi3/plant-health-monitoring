@@ -52,3 +52,6 @@
 
 - Microservices in Docker-Containern
 
+## Architektur
+![alt text](./Architecture.png)
+
