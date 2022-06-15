@@ -1,0 +1,46 @@
+services:
+
+  api:
+    build:
+      context: api
+      dockerfile: ./Dockerfile
+    image: tibs-api
+    container_name: tibs-api
+    environment:
+      - DEBUG=True
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_HOST=host.docker.internal
+      - DB_NAME=postgres
+      - WEB_SERVER_URL=http://localhost:3000
+    volumes:
+      - ./api:/api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    command: 
+      - "python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000"
+
+  db:
+    image: postgres:14
+    container_name: tibs-postgres
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+
+  pgweb:
+    image: sosedoff/pgweb
+    container_name: tibs-pgweb
+    ports: 
+      - "8081:8081"
+    links:
+      - db
+    environment:
+      - DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/postgres?sslmode=disable
+    depends_on:
+      - db
+
+
+
