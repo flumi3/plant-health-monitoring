@@ -41,5 +41,17 @@ services:
     depends_on:
       - db
 
+  web: 
+    build: web
+    image: tibs-web
+    container_name: tibs-web
+    volumes:
+      - ./web:/web
+    expose: 
+      - 3000
+    ports: 
+      - "3000:3000"
+    command: npm start 
+
 
 
