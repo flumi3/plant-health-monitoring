@@ -14,11 +14,11 @@
 #include "config.h"
 #include "measurement.h"
 
-extern const char* firmware_version;
+extern const char *firmware_version;
 
-
-Measurement make_Measurement(std::function<int()> airTemp, std::function<int()> soilTemp, std::function<int()> soilMoisture);
+Measurement make_Measurement(std::function<int()> airTemp, std::function<int()> airhum, std::function<int()> soilTemp, std::function<int()> soilMoisture);
 int airTemp();
+int airhum();
 int soilTemp();
 int soilMoisture();
 
@@ -49,7 +49,7 @@ void setup()
   connect_Wifi();
   connect_MQTT();
 
-  if (update_available(cfg.updateServerURL+"/firmwareVersion"))
+  if (update_available(cfg.updateServerURL + "/firmwareVersion"))
   {
     run_update(cfg.updateServerURL, 8080, "/firmware/firmware.bin");
   }
@@ -102,29 +102,41 @@ void mqtt_loop()
     connect_MQTT();
   }
 
-  Measurement data = make_Measurement(airTemp, soilTemp, soilMoisture);
+  Measurement data = make_Measurement(airTemp, airhum, soilTemp, soilMoisture);
   send_Measurement_MQTT(mqttclient, data);
 }
 
 void send_Measurement_MQTT(MQTTClient &client, Measurement data)
 {
-  std::map<String, int> m = {
+  std::vector<std::pair<String, int>> m = {
       {"airtemp", data.airTemp},
+      {"airhumidity", data.airhum},
       {"soiltemp", data.soilTemp},
       {"soilmoisture", data.soilMoisture}};
 
-  for (auto const &x : m)
+  // Construct JSON object by hand
+  String payload = "{";
+  for (size_t i = 0; i < m.size(); i++)
   {
-    client.publish("/" + cfg.deviceID + "/" + x.first, String(x.second));
+    payload += (m[i].first + " : " + m[i].second);
+    if (i < m.size() - 1)
+    {
+      payload += ",";
+    }
+    payload += "\n";
   }
+  payload += "}";
+  //
+
+  client.publish("/" + cfg.deviceID + "/plant_data", payload);
 }
 
 //----------MQTT-------------
 
 //---------MEASURE---------------------
-Measurement make_Measurement(std::function<int()> airTemp, std::function<int()> soilTemp, std::function<int()> soilMoisture)
+Measurement make_Measurement(std::function<int()> airTemp, std::function<int()> airhum, std::function<int()> soilTemp, std::function<int()> soilMoisture)
 {
-  return {airTemp(), soilTemp(), soilMoisture()};
+  return {airTemp(), airhum(), soilTemp(), soilMoisture()};
 }
 
 int airTemp()
@@ -135,6 +147,14 @@ int airTemp()
 
 #endif
   return 2;
+}
+
+int airhum()
+{
+#if USEAALEC
+  return aalec.get_humidity();
+#endif
+  return 4;
 }
 
 int soilTemp()
@@ -150,7 +170,7 @@ int soilMoisture()
 #if USEAALEC
   return aalec.get_analog();
 #endif
-  return 6;
+  return 8;
 }
 
 //-----OTA-UPDATE-----
@@ -166,7 +186,7 @@ bool update_available(const String &url)
 
   int http_res = http.GET();
 
-  String available_version_number =  http_res == 200 ?  http.getString() : firmware_version;
+  String available_version_number = http_res == 200 ? http.getString() : firmware_version;
   http.end();
   return String(firmware_version) != available_version_number;
 }
