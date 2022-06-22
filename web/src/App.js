@@ -1,22 +1,27 @@
-import logo from './logo.svg';
 import './App.css';
+import './Models/plant_data'
+const axios = require('axios').default;
 
-function App() {
+const API_URL = 'http://localhost:8000'
+
+const axios_instance = axios.create({
+  baseURL: API_URL,
+  headers: { 'Access-Control-Allow-Origin': '*' }
+});
+
+async function fetchData() {
+  var response = await axios_instance.get('/plant-data');
+  console.log(response.data)
+}
+fetchData();
+
+async function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          hello World
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
     </div>
   );
