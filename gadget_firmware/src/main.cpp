@@ -14,7 +14,8 @@
 #include "config.h"
 #include "measurement.h"
 
-extern int firmware_version;
+extern const char* firmware_version;
+
 
 Measurement make_Measurement(std::function<int()> airTemp, std::function<int()> soilTemp, std::function<int()> soilMoisture);
 int airTemp();
@@ -26,14 +27,14 @@ void mqtt_loop();
 void connect_MQTT();
 
 void connect_Wifi();
-bool update_available(String url);
-HTTPUpdateResult run_update(String url, int port, String path);
+bool update_available(const String &url);
+HTTPUpdateResult run_update(const String &url, int port, const String &path);
 
 WiFiClient wificlient;
 MQTTClient mqttclient;
 WiFiManager wifimanager;
 
-const config cfg{(String("ESP-") + String(ESP.getChipId(), HEX)), "0123456789", "broker.hivemq.com", 1883, "http://192.168.79.1:8080"};
+const config cfg{(String("ESP-") + String(ESP.getChipId(), HEX)), "0123456789", "broker.hivemq.com", 1883, "http://192.168.79.1:8000"};
 
 constexpr int sleepdelay15s = 15 * 60 * 1000; // 15 Minuten in ms
 
@@ -48,9 +49,9 @@ void setup()
   connect_Wifi();
   connect_MQTT();
 
-  if (update_available(cfg.updateServerURL+"/?version="+String(firmware_version)))
+  if (update_available(cfg.updateServerURL+"/firmwareVersion"))
   {
-    run_update(cfg.updateServerURL, 8080, "/firmware.bin");
+    run_update(cfg.updateServerURL, 8080, "/firmware/firmware.bin");
   }
 }
 
@@ -154,7 +155,7 @@ int soilMoisture()
 
 //-----OTA-UPDATE-----
 
-bool update_available(String url)
+bool update_available(const String &url)
 {
   HTTPClient http;
 
@@ -165,15 +166,12 @@ bool update_available(String url)
 
   int http_res = http.GET();
 
-  if (http_res == 200)
-  {
-    return true;
-  }
-
-  return false;
+  String available_version_number =  http_res == 200 ?  http.getString() : firmware_version;
+  http.end();
+  return String(firmware_version) != available_version_number;
 }
 
-HTTPUpdateResult run_update(String url, int port, String path)
+HTTPUpdateResult run_update(const String &url, int port, const String &path)
 {
   return ESPhttpUpdate.update(wificlient, url, port, path);
 }
