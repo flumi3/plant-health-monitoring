@@ -1,6 +1,7 @@
 from datetime import datetime
 from pydantic import BaseModel
 
+
 class PlantDataBase(BaseModel):
     air_temperature: float
     air_humidity: float
