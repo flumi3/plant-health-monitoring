@@ -1,6 +1,7 @@
 import json
 from fastapi import FastAPI, Depends
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 import models
@@ -10,6 +11,16 @@ from database import engine, get_db
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
+
+origins = [
+    "http://localhost:3000"
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # origins permitted to make cross-origin requests
+    allow_methods=["*"],  # allowed http methods
+    allow_headers=["*"],  # allowed http headers
+)
 
 
 @app.get("/")
