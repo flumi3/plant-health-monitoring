@@ -21,6 +21,21 @@ services:
       - db
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
+  web: 
+    build:
+      context: web
+      dockerfile: ./Dockerfile
+    image: tibs-web
+    container_name: tibs-web
+    volumes:
+      - /web/node_modules
+      - ./web:/web
+    expose: 
+      - 3000
+    ports: 
+      - "3000:3000"
+    command: npm start 
+
   mqtt-client:
     build:
       context: mqtt_client
@@ -52,18 +67,3 @@ services:
       - DATABASE_URL=postgres://postgres:postgres@host.docker.internal:5432/postgres?sslmode=disable
     depends_on:
       - db
-
-  web: 
-    build: web
-    image: tibs-web
-    container_name: tibs-web
-    volumes:
-      - ./web:/web
-    expose: 
-      - 3000
-    ports: 
-      - "3000:3000"
-    command: npm start 
-
-
-
