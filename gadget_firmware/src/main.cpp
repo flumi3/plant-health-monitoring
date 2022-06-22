@@ -14,7 +14,7 @@
 #include "config.h"
 #include "measurement.h"
 
-extern const char *firmware_version;
+extern int firmware_version;
 
 Measurement make_Measurement(std::function<int()> airTemp, std::function<int()> airhum, std::function<int()> soilTemp, std::function<int()> soilMoisture);
 int airTemp();
@@ -28,13 +28,13 @@ void connect_MQTT();
 
 void connect_Wifi();
 bool update_available(const String &url);
-HTTPUpdateResult run_update(const String &url, int port, const String &path);
+HTTPUpdateResult run_update(const String &url, const String &path);
 
 WiFiClient wificlient;
 MQTTClient mqttclient;
 WiFiManager wifimanager;
 
-const config cfg{(String("ESP-") + String(ESP.getChipId(), HEX)), "0123456789", "broker.hivemq.com", 1883, "http://192.168.79.1:8000"};
+const config cfg{(String("ESP-") + String(ESP.getChipId(), HEX)), "0123456789", "broker.hivemq.com", 1883, "http://192.168.178.23:8000"};
 
 constexpr int sleepdelay15s = 15 * 60 * 1000; // 15 Minuten in ms
 
@@ -47,16 +47,19 @@ void setup()
 #endif
   Serial.println("FIRMWARE VERSION:" + String(firmware_version));
   connect_Wifi();
-  connect_MQTT();
-
   if (update_available(cfg.updateServerURL + "/firmwareVersion"))
   {
-    run_update(cfg.updateServerURL, 8080, "/firmware/firmware.bin");
+    Serial.println("[UPDATE] Update available");
+    delay(1000);
+    run_update(cfg.updateServerURL, "/firmware/firmware.bin");
   }
+
+  connect_MQTT();
 }
 
 void loop()
 {
+
   mqtt_loop();
   delay(2000);
 }
@@ -183,15 +186,23 @@ bool update_available(const String &url)
   {
     Serial.println("[HTTP] Connection error");
   }
-
   int http_res = http.GET();
-
-  String available_version_number = http_res == 200 ? http.getString() : firmware_version;
+  int http_answer = http.getString().toInt();
+  int available_version_number = http_res == 200 ? http_answer : firmware_version;
   http.end();
-  return String(firmware_version) != available_version_number;
+  return firmware_version < available_version_number;
 }
 
-HTTPUpdateResult run_update(const String &url, int port, const String &path)
+HTTPUpdateResult run_update(const String &url, const String &path)
 {
-  return ESPhttpUpdate.update(wificlient, url, port, path);
+  ESPhttpUpdate.onProgress([](int cur, int total)
+                           { Serial.printf("CALLBACK:  HTTP update process at %d of %d bytes...\n", cur, total); });
+  auto ret = ESPhttpUpdate.update(wificlient, url+path);
+  if (ret == HTTP_UPDATE_OK)
+  {
+    Serial.println("HTTP_UPDATE_OK");
+    delay(1000); // Wait a second and restart
+    ESP.restart();
+  }
+  return ret;
 }
