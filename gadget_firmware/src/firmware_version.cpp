@@ -1,1 +1,1 @@
-const char* firmware_version = "0";
+int firmware_version = 3;
