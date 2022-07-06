@@ -1,5 +1,22 @@
 # tibs
 
+## TODO:
+
+### Backend
+- Add device table to db:
+  - Attributes: Name, Device ID und irgend einen primary key für Mapping mit
+    den Daten
+  - Endpoint für Hinzufügen von neuem Gerät
+
+### Frontend
+- Drawer mit 2 Drawern die einen zu den folgenden Seiten führen:
+  - Geräteübersicht wo man Geräte hinzufügen und auswählen kann (Startseite)
+  - Dashboard eines Geräts wo man die jeweiligen Daten sieht
+
+### Alexa
+- Find out how development works
+
+
 ## Pflanzen Überwachung
 
 ### Alexa
