@@ -33,7 +33,7 @@ def on_message(client: Client, userdata: Any, message: MQTTMessage):
     
     payload = {
         "air_temperature": measurement_values.get("airtemp"),
-        "air_humidity": measurement_values.get("airhumidity", -1),  # TODO: use air humidity if possible with sensor
+        "air_humidity": measurement_values.get("airhumidity"),
         "soil_temperature": measurement_values.get("soiltemp"),
         "soil_humidity": measurement_values.get("soilmoisture"),
         "timestamp": datetime.timestamp(datetime.now())
