@@ -26,7 +26,7 @@ class PlantDataBase(BaseModel):
     air_temperature: float
     air_humidity: float
     soil_temperature: float
-    soil_humitidy: float
+    soil_humidity: float
     timestamp: int
 
 

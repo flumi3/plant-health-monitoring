@@ -19,7 +19,7 @@ class PlantData(Base):
     air_temperature = Column(Float, nullable=False)
     air_humidity = Column(Float)
     soil_temperature = Column(Float, nullable=False)
-    soil_humitidy = Column(Float, nullable=False)
+    soil_humidity = Column(Float, nullable=False)
     timestamp = Column(Integer, nullable=False)
     
     # 1 to 1 relationship with device
