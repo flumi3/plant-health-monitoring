@@ -1,0 +1,9 @@
+.devices-header {
+    text-align: left;
+    padding: 24px 24px 24px 24px;
+}
+
+.devices-content {
+    max-width: 1000px;
+    margin: 0 auto;
+}

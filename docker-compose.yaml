@@ -27,6 +27,8 @@ services:
       dockerfile: ./Dockerfile
     image: tibs-web
     container_name: tibs-web
+    environment:
+      - REACT_APP_API_SERVER_URL=http://localhost:8000
     volumes:
       - /web/node_modules
       - ./web:/web
@@ -51,8 +53,8 @@ services:
     depends_on:
       - api
     restart: on-failure
-    command: python3 mqtt_client.py
-    #command: tail -F anything  # use this command if you want to keep the container alive (it shuts down upon an error)
+    #command: python3 mqtt_client.py
+    command: tail -F anything  # use this command if you want to keep the container alive (it shuts down upon an error)
 
   db:
     image: postgres:14
