@@ -1,15 +1,24 @@
 import * as React from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import "./TopBar.css";
 
-const TopBar = () => {
+export default function TopBar() {
   return (
-    <div className="TopBar">
-        <Typography variant="h4">
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
+        <Toolbar>
+          <Typography
+            variant="h6"
+            noWrap
+            component="div"
+            sx={{ flexGrow: 1, display: { xs: 'none', sm: 'block' } }}
+          >
             Plant Health Dashboard
-        </Typography>
-    </div>
+          </Typography>
+        </Toolbar>
+      </AppBar>
+    </Box>
   );
 }
-
-export default TopBar
