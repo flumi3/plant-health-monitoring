@@ -10,25 +10,20 @@
 #include <ESP8266httpUpdate.h>
 #include <WiFiManager.h>
 #include <MQTTClient.h>
-#include <vector>
-#include <map>
+#include <queue>
 #include "config.h"
 #include "measurement.h"
-#include <FS.h>
-#include <LittleFS.h>
-#include <algorithm>
 
 extern int firmware_version;
 const String deviceID = "ESP-" + String(ESP.getChipId(), HEX);
 const String configFilePath = "/config.ini";
 
-Measurement make_Measurement(std::function<int()> airTemp, std::function<int()> airhum, std::function<int()> soilTemp, std::function<int()> soilMoisture);
+Measurement take_Measurement(std::function<int()> airTemp, std::function<int()> airhum, std::function<int()> soilTemp, std::function<int()> soilMoisture);
 int airTemp();
 int airhum();
 int soilTemp();
 int soilMoisture();
 
-void send_Measurement_MQTT(MQTTClient &client, Measurement data);
 void mqtt_loop();
 void connect_MQTT();
 
@@ -39,9 +34,6 @@ bool update_available(const String &url);
 HTTPUpdateResult run_update(const String &url, const String &path);
 
 const config default_config{deviceID, "0123456789", "broker.hivemq.com", 1883, "http://192.168.178.23:8000"};
-void saveConfig(const config &cfg, File &file);
-config readConfig(File &file);
-void printConfig(const config &c);
 
 constexpr int sleepdelay15s = 15 * 60 * 1000; // 15 Minuten in ms
 
@@ -50,6 +42,9 @@ MQTTClient mqttclient;
 WiFiManager wifimanager;
 config cfg = default_config;
 
+using mqtt_message = std::pair<String,String>;
+
+std::queue<mqtt_message> mqtt_message_queue;
 
 void setup()
 {
@@ -70,7 +65,14 @@ void setup()
     {
       Serial.println("[FS] Found config file");
       File configFile = LittleFS.open(configFilePath, "r");
-      cfg = readConfig(configFile);
+      try
+      {
+        cfg = readConfig(configFile);
+      }
+      catch (...)
+      {
+        cfg = default_config;
+      }
       configFile.close();
     }
   }
@@ -99,76 +101,11 @@ void setup()
 
 void loop()
 {
-
+  Measurement data = take_Measurement(airTemp, airhum, soilTemp, soilMoisture);
+  String payload = measurement_to_json(data);
+  mqtt_message_queue.push({"/" + cfg.deviceID + "/plant_data", payload});
   mqtt_loop();
   delay(2000);
-}
-
-void saveConfig(const config &cfg, File &file)
-{
-
-  std::vector<String> data{
-      cfg.mqtt_broker_hostname,
-      String(cfg.mqtt_broker_port),
-      cfg.updateServerURL};
-  const std::vector<String> names{"MQTThost", "MQTTport",
-                                  "updateServerURL"};
-  std::vector<String> results;
-  std::transform(data.begin(), data.end(), names.begin(), std::back_inserter(results),
-                 [](const auto &aa, const auto &bb)
-                 {
-                   return (bb + "=" + aa);
-                 });
-
-  if (file)
-  {
-    for (auto &r : results)
-    {
-      file.println(r);
-    }
-  }
-}
-
-config readConfig(File &file)
-{
-
-  std::map<String, String> entries;
-
-  if (file)
-  {
-    while (file.available())
-    {
-      String data = file.readStringUntil('\n');
-      int delim = data.indexOf("=");
-      entries.insert({data.substring(0, delim), data.substring(delim + 1, data.length())});
-    }
-  }
-  else
-  {
-    //Wenn config Datei nicht ok, gib default config zurück
-    return default_config;
-  }
-  const std::vector<String> names{"MQTThost", "MQTTport",
-                                  "updateServerURL"};
-
-  for (auto &[key, val] : entries)
-  {
-    val.trim();
-  }
-  return config({cfg.deviceID, cfg.defaultWifipasswd, entries["MQTThost"], entries["MQTTport"].toInt(), entries["updateServerURL"]});
-}
-
-void printConfig(const config &c){
-  std::vector<std::pair<String,String>>data {
-    {"DeviceID: ", c.deviceID},
-    {"DefaultWiFiPassword: ", c.defaultWifipasswd},
-    {"MQTT-Host: ", c.mqtt_broker_hostname},
-    {"MOTT-Port: ", String(c.mqtt_broker_port)},
-    {"Update-Server-URL: ", c.updateServerURL}
-  };
-  for(auto&& [key,value] : data){
-    Serial.println("[CONFIG] "+ key+ value);
-  }
 }
 
 //--------WIFI----------
@@ -228,39 +165,18 @@ void mqtt_loop()
     connect_MQTT();
   }
 
-  Measurement data = make_Measurement(airTemp, airhum, soilTemp, soilMoisture);
-  send_Measurement_MQTT(mqttclient, data);
-}
-
-void send_Measurement_MQTT(MQTTClient &client, Measurement data)
-{
-  std::vector<std::pair<String, int>> m = {
-      {"airtemp", data.airTemp},
-      {"airhumidity", data.airhum},
-      {"soiltemp", data.soilTemp},
-      {"soilmoisture", data.soilMoisture}};
-
-  // Construct JSON object by hand
-  String payload = "{";
-  for (size_t i = 0; i < m.size(); i++)
-  {
-    payload += (m[i].first + " : " + m[i].second);
-    if (i < m.size() - 1)
-    {
-      payload += ",";
-    }
-    payload += "\n";
+  
+  while(!mqtt_message_queue.empty()){
+      auto&& [topic,payload] = mqtt_message_queue.front();
+      mqttclient.publish(topic,payload);
+      mqtt_message_queue.pop();
   }
-  payload += "}";
-  //
 
-  client.publish("/" + cfg.deviceID + "/plant_data", payload);
 }
-
 //----------MQTT-------------
 
 //---------MEASURE---------------------
-Measurement make_Measurement(std::function<int()> airTemp, std::function<int()> airhum, std::function<int()> soilTemp, std::function<int()> soilMoisture)
+Measurement take_Measurement(std::function<int()> airTemp, std::function<int()> airhum, std::function<int()> soilTemp, std::function<int()> soilMoisture)
 {
   return {airTemp(), airhum(), soilTemp(), soilMoisture()};
 }
