@@ -28,16 +28,24 @@ async def read_root():
     return "Running on port 8000"
 
 
-@app.get("/plant-data", response_model=list[schemas.PlantDataRead])
-async def read_plant_data(db: Session = Depends(get_db)):
-    db_records = crud.get_plant_data(db)
-    return db_records
+@app.get("/devices", response_model=list[schemas.Device])
+async def read_devices(db: Session = Depends(get_db)):
+    return crud.get_devices(db)
 
 
-@app.post("/plant-data", response_model=schemas.PlantDataRead)
+@app.post("/devices")
+async def create_device(device: schemas.DeviceCreate, db: Session = Depends(get_db)):
+    crud.create_device(db, device)
+
+
+@app.get("/plant-data/{device_id}", response_model=list[schemas.PlantData])
+async def read_plant_data(device_id, db: Session = Depends(get_db)):
+    return crud.get_plant_data_by_id(db, device_id)
+
+
+@app.post("/plant-data")
 async def create_plant_data(data: schemas.PlantDataCreate, db: Session = Depends(get_db)):
-    db_record = crud.create_plant_data(db, data)
-    return db_record
+    crud.create_plant_data(db, data)
 
 
 @app.get("/firmwareVersion")

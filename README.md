@@ -16,6 +16,10 @@
 ### Alexa
 - Find out how development works
 
+### Docker compose
+- create docker compose for prod and mostly since we need to set different environment variables in prod
+  (backend url, database connection, etc...)
+
 
 ## Pflanzen Überwachung
 
