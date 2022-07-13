@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Typography } from "@mui/material";
-import "./Devices.css"
-
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import { useNavigate } from "react-router-dom";
+import TopBar from "../components/TopBar";
+import "./Devices.css"
 
 export default function Devices() {
     const [ devices, setDevices ] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // get devices from backend
@@ -25,7 +27,9 @@ export default function Devices() {
     }, []);
 
     return (
+        // TODO: Add submit form to add new devices
         <div>
+            <TopBar />
             <Typography className="devices-header" variant="h4" fontWeight="bold">
                 Devices
             </Typography>
@@ -52,9 +56,7 @@ export default function Devices() {
                                     key={device.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     hover
-                                    onClick={() => {
-                                        console.log("click");
-                                    }}
+                                    onClick={() => navigate("/plant-data", {state: {deviceId: device.id}})}
                                 >
                                     <TableCell component="th" scope="row">
                                         {device.name}
