@@ -26,6 +26,7 @@ int soilMoisture();
 
 void mqtt_loop();
 void connect_MQTT();
+void mqtt_callback(const String &topic, const String &payload);
 
 void connect_Wifi();
 
@@ -42,9 +43,12 @@ MQTTClient mqttclient;
 WiFiManager wifimanager;
 config cfg = default_config;
 
-using mqtt_message = std::pair<String,String>;
+using mqtt_message = std::pair<String, String>;
 
 std::queue<mqtt_message> mqtt_message_queue;
+
+const String reset_topic = "/"+deviceID+"/reset";
+void reset();
 
 void setup()
 {
@@ -97,6 +101,9 @@ void setup()
   saveConfig(cfg, file);
   file.close();
   printConfig(cfg);
+
+  mqttclient.onMessage(mqtt_callback);
+  mqttclient.subscribe(reset_topic);
 }
 
 void loop()
@@ -165,11 +172,17 @@ void mqtt_loop()
     connect_MQTT();
   }
 
-  
-  while(!mqtt_message_queue.empty()){
-      auto&& [topic,payload] = mqtt_message_queue.front();
-      mqttclient.publish(topic,payload);
-      mqtt_message_queue.pop();
+  while (!mqtt_message_queue.empty())
+  {
+    auto &&[topic, payload] = mqtt_message_queue.front();
+    mqttclient.publish(topic, payload);
+    mqtt_message_queue.pop();
+  }
+}
+
+void mqtt_callback(const String &topic, const String &payload){
+  if(topic == reset_topic){
+    reset();
   }
 
 }
@@ -255,4 +268,18 @@ HTTPUpdateResult run_update(const String &url, const String &path)
     ESP.restart();
   }
   return ret;
+}
+
+//-------Reset----------
+
+void reset()
+{
+  wifimanager.resetSettings();
+  Serial.println("[WIFI] Wifi data deleted");
+  auto del = LittleFS.remove(configFilePath);
+  if(del)
+    Serial.println("[CONFIG] Config file removed");
+
+  delay(1000);
+  ESP.restart();
 }
