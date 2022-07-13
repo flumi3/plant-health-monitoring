@@ -5,7 +5,7 @@ import TopBar from "../components/TopBar";
 import "./DeviceDashboard.css";
 
 export default function DeviceDashboard() {
-    const [ plantData, setPlantData ] = useState([]);
+    const [plantData, setPlantData] = useState({ air_temperature: 0, air_humidity: 0, soil_temperature: 0, soil_humidity: 0 });
     const location = useLocation();
 
     useEffect(() => {
@@ -18,7 +18,7 @@ export default function DeviceDashboard() {
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);
-                    setPlantData(data);
+                    setPlantData(data[0]);
                 });
         }
         getData();
