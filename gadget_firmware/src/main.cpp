@@ -11,6 +11,7 @@
 #include <WiFiManager.h>
 #include <MQTTClient.h>
 #include <queue>
+#include <DFRobot_SHT20.h>
 #include "config.h"
 #include "measurement.h"
 
@@ -49,6 +50,8 @@ std::queue<mqtt_message> mqtt_message_queue;
 
 const String reset_topic = "/"+deviceID+"/reset";
 void reset();
+
+DFRobot_SHT20 sht20(&Wire);
 
 void setup()
 {
@@ -104,6 +107,10 @@ void setup()
 
   mqttclient.onMessage(mqtt_callback);
   mqttclient.subscribe(reset_topic);
+
+  sht20.initSHT20();
+  Serial.println("[SHT20] Sensor init finish!");
+
 }
 
 void loop()
@@ -215,15 +222,15 @@ int airhum()
 int soilTemp()
 {
 #if USEAALEC
-  return aalec.get_analog();
+  return sht20.readTemperature();
 #endif
-  return 4;
+  return 6;
 }
 
 int soilMoisture()
 {
 #if USEAALEC
-  return aalec.get_analog();
+  return sht20.readHumidity();
 #endif
   return 8;
 }
