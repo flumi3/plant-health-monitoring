@@ -2,6 +2,20 @@
 
 ## TODO:
 
+## Getting started
+
+### Building the app
+```shell
+docker compose -f docker-compose.dev.yaml build  # dev
+docker compose build  # prod
+```
+
+### Starting the app
+```shell
+docker compose -f docker-compose.dev.yaml up  # dev
+docker compose up  # prod
+```
+
 ### Backend
 - Add device table to db:
   - Attributes: Name, Device ID und irgend einen primary key für Mapping mit
