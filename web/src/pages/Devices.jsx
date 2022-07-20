@@ -9,6 +9,7 @@ import TableRow from '@mui/material/TableRow';
 import { useNavigate } from "react-router-dom";
 import TopBar from "../components/TopBar";
 import "./Devices.css"
+import DeviceForm from "../components/DeviceForm";
 
 export default function Devices() {
     const [ devices, setDevices ] = useState([]);
@@ -27,12 +28,14 @@ export default function Devices() {
     }, []);
 
     return (
-        // TODO: Add submit form to add new devices
         <div>
             <TopBar />
             <Typography className="devices-header" variant="h4" fontWeight="bold">
                 Devices
             </Typography>
+            <div className="device-form">
+                <DeviceForm/>
+            </div>
             <div className="devices-content">
                 <TableContainer>
                     <Table>

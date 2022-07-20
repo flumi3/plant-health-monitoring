@@ -34,9 +34,9 @@ export default function DeviceDashboard() {
             <TopBar />
             <div className="device-dashboard-data">
                 <MeasurementCard className="air-temp" title="Air Temperature" value={plantData[0].air_temperature + "°C"} />
-                <MeasurementCard className="air-humidity" title="Air Humidity" value={plantData[0].air_humidity} />
+                <MeasurementCard className="air-humidity" title="Air Humidity" value={plantData[0].air_humidity + "%"} />
                 <MeasurementCard className="soil-temp" title="Soil Temperature" value={plantData[0].soil_temperature + "°C"} />
-                <MeasurementCard className="soil-humidity" title="Soil Humidity" value={plantData[0].soil_humidity} />
+                <MeasurementCard className="soil-humidity" title="Soil Humidity" value={plantData[0].soil_humidity + "%"} />
             </div>
         </div>
     );
