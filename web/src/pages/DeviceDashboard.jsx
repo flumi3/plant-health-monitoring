@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import MeasurementCard from "../components/MeasurementCard";
 import TopBar from "../components/TopBar";
+import ResetButton from "../components/ResetButton";
 import "./DeviceDashboard.css";
 
 export default function DeviceDashboard() {
@@ -38,6 +39,8 @@ export default function DeviceDashboard() {
                 <MeasurementCard className="soil-temp" title="Soil Temperature" value={plantData[0].soil_temperature + "°C"} />
                 <MeasurementCard className="soil-humidity" title="Soil Humidity" value={plantData[0].soil_humidity + "%"} />
             </div>
+            {/* TODO: pass correct identifying information that is necessary for resetting the device */}
+            <ResetButton deviceId={location.state.deviceId}/>
         </div>
     );
 } 
