@@ -57,10 +57,9 @@ def create_plant_data(db: Session, data: schemas.PlantDataCreate) -> models.Plan
     return plant_data_record
 
 
-def get_name_by_id(db:Session, device_id:int)->models.Device:
-    return db.query(models.Device).filter(models.Device.id == device_id).first()
-
-def get_by_critical_humidity(db: Session) -> list[int]:
+def get_by_critical_humidity(db: Session) -> list[models.Device]:
     devices = get_devices(db)
-    last_val = [(device.id,get_plant_data_by_id(db,device.id)[-1]) for device in devices]
+
+    last_val = [(device,get_plant_data_by_id(db,device.id)[-1]) for device in devices]
+
     return [dev for dev,data in last_val if data.soil_humidity <= 30]

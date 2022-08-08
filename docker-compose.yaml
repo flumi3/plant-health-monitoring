@@ -23,22 +23,22 @@ services:
       - db
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
-  web: 
-    build:
-      context: web
-      dockerfile: ./Dockerfile
-    image: tibs-web
-    container_name: tibs-web
-    environment:
-      - REACT_APP_API_SERVER_URL=REACT_APP_API_SERVER_URL=193.197.229.59:8000
-    volumes:
-      - /web/node_modules
-      - ./web:/web
-    expose: 
-      - 3000
-    ports: 
-      - "3000:3000"
-    command: npm start 
+  #web: 
+  #  build:
+  #    context: web
+  #    dockerfile: ./Dockerfile
+  #  image: tibs-web
+  #  container_name: tibs-web
+  #  environment:
+  #    - REACT_APP_API_SERVER_URL=193.197.229.59:8000
+  #  volumes:
+  #    - /web/node_modules
+  #    - ./web:/web
+  #  expose: 
+  #    - 3000
+  #  ports: 
+  #    - "3000:3000"
+  #  command: npm start 
 
   mqtt-client:
     build:
