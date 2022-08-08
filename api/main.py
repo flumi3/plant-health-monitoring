@@ -14,7 +14,7 @@ models.Base.metadata.create_all(bind=engine)
 
 origins = [
     "http://localhost:3000"
-]
+]   
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,  # origins permitted to make cross-origin requests
@@ -37,11 +37,17 @@ async def read_devices(db: Session = Depends(get_db)):
 async def create_device(device: schemas.DeviceCreate, db: Session = Depends(get_db)):
     crud.create_device(db, device)
 
+@app.get("/get_device_name/{device_id}",response_model=schemas.Device)
+async def read_device_name(device_id, db: Session = Depends(get_db)):
+    return crud.get_name_by_id(db,device_id)
 
 @app.get("/plant-data/{device_id}", response_model=list[schemas.PlantData])
 async def read_plant_data(device_id, db: Session = Depends(get_db)):
     return crud.get_plant_data_by_id(db, device_id)
 
+@app.get("/get_critical_plants", response_model=list[int])
+async def read_critical_plant(db: Session = Depends(get_db)):
+    return crud.get_by_critical_humidity(db)
 
 @app.post("/plant-data")
 async def create_plant_data(data: schemas.PlantDataCreate, db: Session = Depends(get_db)):

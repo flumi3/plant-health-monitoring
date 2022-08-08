@@ -90,3 +90,4 @@ docker compose up  # prod
 ## Architektur
 ![alt text](./docs/Architecture.png)
 
+https://www.dlr.rlp.de/Internet/global/themen.nsf/b81d6f06b181d7e7c1256e920051ac19/6449e62b480fcb10c1257d5f0034e7b5?OpenDocument
