@@ -5,10 +5,12 @@ services:
       context: api
       dockerfile: ./Dockerfile
     image: tibs-api
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     container_name: tibs-api
     environment:
       - DEBUG=False
-      - DB_USER=postgress
+      - DB_USER=postgres
       - DB_PASSWORD=postgres
       - DB_HOST=host.docker.internal
       - DB_NAME=postgres
@@ -28,14 +30,14 @@ services:
     image: tibs-web
     container_name: tibs-web
     environment:
-      - REACT_APP_API_SERVER_URL=http://localhost:8000
+      - REACT_APP_API_SERVER_URL=REACT_APP_API_SERVER_URL=193.197.229.59:8000
     volumes:
       - /web/node_modules
       - ./web:/web
     expose: 
-      - 80
+      - 3000
     ports: 
-      - "80:80"
+      - "3000:3000"
     command: npm start 
 
   mqtt-client:
