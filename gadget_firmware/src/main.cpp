@@ -35,7 +35,7 @@ void update();
 bool update_available(const String &url);
 HTTPUpdateResult run_update(const String &url, const String &path);
 
-const config default_config{deviceID, "0123456789", "broker.hivemq.com", 1883, "http://192.168.178.23:8000"};
+const config default_config{deviceID, "0123456789", "193.197.229.59", 1883, "http://192.168.178.23:8000"};
 
 constexpr int sleepdelay15s = 15 * 60 * 1000; // 15 Minuten in ms
 
