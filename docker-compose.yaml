@@ -14,13 +14,12 @@ services:
       - DB_PASSWORD=postgres
       - DB_HOST=host.docker.internal
       - DB_NAME=postgres
-      - WEB_SERVER_URL=http://web:3000
     volumes:
       - ./api:/api
     ports:
       - "8000:8000"
     depends_on:
-      - db
+      - "db"
     command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
 
   #web: 
@@ -46,17 +45,15 @@ services:
       dockerfile: ./Dockerfile
     image: tibs-mqtt-client
     container_name: tibs-mqtt-client
-    network_mode: "host"
     environment:
-      - BROKER_IP_ADDRESS=mqtt://193.197.229.59:1883
-      - API_SERVER_URL=http://api:8000
+      - BROKER_IP_ADDRESS=193.197.229.59
+      - API_SERVER_URL=http://193.197.229.59:8000
     volumes:
       - ./mqtt_client:/mqtt_client
-    depends_on:
-      - api
     restart: on-failure
-    #command: python3 mqtt_client.py
-    command: tail -F anything  # use this command if you want to keep the container alive (it shuts down upon an error)
+    depends_on:
+      - "api"
+    command: python3 /mqtt_client/mqtt_client.py
 
   db:
     image: postgres:14
@@ -65,3 +62,4 @@ services:
       - POSTGRES_PASSWORD=postgres
     ports:
       - "5432:5432"
+
