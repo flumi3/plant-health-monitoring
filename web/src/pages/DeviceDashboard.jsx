@@ -34,10 +34,10 @@ export default function DeviceDashboard() {
         <div>
             <TopBar />
             <div className="device-dashboard-data">
-                <MeasurementCard className="air-temp" title="Air Temperature" value={plantData[0].air_temperature + "°C"} />
-                <MeasurementCard className="air-humidity" title="Air Humidity" value={plantData[0].air_humidity + "%"} />
-                <MeasurementCard className="soil-temp" title="Soil Temperature" value={plantData[0].soil_temperature + "°C"} />
-                <MeasurementCard className="soil-humidity" title="Soil Humidity" value={plantData[0].soil_humidity + "%"} />
+                <MeasurementCard className="air-temp" title="Air Temperature" value={plantData[plantData.length - 1].air_temperature + "°C"} />
+                <MeasurementCard className="air-humidity" title="Air Humidity" value={plantData[plantData.length - 1].air_humidity + "%"} />
+                <MeasurementCard className="soil-temp" title="Soil Temperature" value={plantData[plantData.length - 1].soil_temperature + "°C"} />
+                <MeasurementCard className="soil-humidity" title="Soil Humidity" value={plantData[plantData.length - 1].soil_humidity + "%"} />
             </div>
             {/* TODO: pass correct identifying information that is necessary for resetting the device */}
             <ResetButton deviceId={location.state.deviceId}/>
