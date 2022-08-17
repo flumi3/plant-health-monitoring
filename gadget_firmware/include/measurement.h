@@ -21,7 +21,7 @@ inline String measurement_to_json(const Measurement &data)
   String json = "{";
   for (size_t i = 0; i < m.size(); i++)
   {
-    json += (m[i].first + " : " + m[i].second);
+    json += ("\""+ m[i].first + "\"" + " : " + m[i].second);
     if (i < m.size() - 1)
     {
       json += ",";
