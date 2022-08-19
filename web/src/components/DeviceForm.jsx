@@ -49,7 +49,7 @@ export default function DeviceForm() {
                         fullWidth
                         required
                         id="first-name"
-                        label="Device name"
+                        label="Device ID"
                         variant="outlined"
                         value={deviceId}
                         onChange={event => setDeviceId(event.target.value)}
