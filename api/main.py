@@ -38,6 +38,10 @@ async def read_devices(db: Session = Depends(get_db)):
 async def create_device(device: schemas.DeviceCreate, db: Session = Depends(get_db)):
     crud.create_device(db, device)
 
+@app.post("/remove_device/{device_id}")
+async def remove_device(device_id, db: Session = Depends(get_db)):
+    crud.remove_device(db,device_id)
+
 @app.get("/plant-data/{device_id}", response_model=list[schemas.PlantData])
 async def read_plant_data(device_id, db: Session = Depends(get_db), limit: int = 10):
     return crud.get_plant_data_by_id(db, device_id, limit)
@@ -46,6 +50,7 @@ async def read_plant_data(device_id, db: Session = Depends(get_db), limit: int =
 @app.post("/plant-data")
 async def create_plant_data(data: schemas.PlantDataCreate, db: Session = Depends(get_db)):
     crud.create_plant_data(db, data)
+
 
 
 @app.get("/firmwareVersion")

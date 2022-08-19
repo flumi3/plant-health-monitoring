@@ -3,8 +3,10 @@ import { useLocation } from "react-router-dom";
 import MeasurementCard from "../components/MeasurementCard";
 import TopBar from "../components/TopBar";
 import ResetButton from "../components/ResetButton";
+import RemoveButton from "../components/RemoveButton";
 import "./DeviceDashboard.css";
 import SplineChart from "../components/SplineChart";
+import {ButtonGroup} from "@mui/material";
 
 export default function DeviceDashboard() {
     const [plantData, setPlantData] = useState([
@@ -41,7 +43,12 @@ export default function DeviceDashboard() {
                 <MeasurementCard className="soil-humidity" title="Soil Humidity" value={plantData.length === 0 ? "Nan" : plantData[0].soil_humidity + "%"} />
             </div>
             {/* TODO: pass correct identifying information that is necessary for resetting the device */}
-            <ResetButton deviceId={location.state.deviceId} />
+            <div className = "device-dashboard-data">
+            <ButtonGroup variant="contained" aria-label="outlined primary button group" >
+                <ResetButton deviceId={location.state.deviceId} />
+                <RemoveButton deviceId={location.state.deviceId} />
+            </ButtonGroup>
+            </div>
             <SplineChart data={[
                 plantData.map((data) => {
                     return { x: new Date(data.timestamp * 1000), y: data.soil_humidity };

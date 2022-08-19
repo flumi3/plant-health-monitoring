@@ -8,7 +8,7 @@ def create_random_data():
         "airtemp": randint(-10,30),
         "airhumidity": randint(0,100),
         "soiltemp": randint(-10,30),
-        "soilmoisture": randint(0,100)
+        "soilmoisture": randint(0,30)
     }
 
 CLIENT_ID = "EMULATOR_A"

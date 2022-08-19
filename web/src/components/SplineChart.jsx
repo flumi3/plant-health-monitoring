@@ -6,7 +6,7 @@ const SplineChart = (props) => {
     const options = {
         animationEnabled: true,
         title:{
-            text: "Historie"
+            text: "History"
         },
         axisY: {
             title: "Feuchte",

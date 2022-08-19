@@ -26,6 +26,10 @@ def get_devices(db: Session) -> list[schemas.Device]:
     """Queries all existing devices from the db."""
     return db.query(models.Device).all()
 
+def remove_device(db:Session, device_id: int): 
+    db.query(models.Device).filter(models.Device.id == device_id).delete()
+    db.query(models.PlantData).filter(models.PlantData.device_id == device_id).delete()
+    db.commit()
 
 def get_plant_data_by_id(db: Session, device_id: int, limit: int) -> list[schemas.PlantData]:
     """
