@@ -8,7 +8,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
-#include <WiFiManager.h>
+#include "WiFiManager.h"
 #include <MQTTClient.h>
 #include <queue>
 #include <DFRobot_SHT20.h>
@@ -287,6 +287,6 @@ void reset()
   if(del)
     Serial.println("[CONFIG] Config file removed");
 
-  delay(1000);
+  delay(2000);
   ESP.restart();
 }
