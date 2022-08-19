@@ -39,12 +39,9 @@ async def create_device(device: schemas.DeviceCreate, db: Session = Depends(get_
     crud.create_device(db, device)
 
 @app.get("/plant-data/{device_id}", response_model=list[schemas.PlantData])
-async def read_plant_data(device_id, db: Session = Depends(get_db)):
-    return crud.get_plant_data_by_id(db, device_id)
+async def read_plant_data(device_id, db: Session = Depends(get_db), limit: int = 10):
+    return crud.get_plant_data_by_id(db, device_id, limit)
 
-@app.get("/get_critical_plants", response_model=list[schemas.Device])
-async def read_critical_plant(db: Session = Depends(get_db)):
-    return crud.get_by_critical_humidity(db)
 
 @app.post("/plant-data")
 async def create_plant_data(data: schemas.PlantDataCreate, db: Session = Depends(get_db)):

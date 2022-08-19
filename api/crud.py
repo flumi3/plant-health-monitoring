@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-
+from sqlalchemy import desc
 import schemas
 import models
 
@@ -27,7 +27,7 @@ def get_devices(db: Session) -> list[schemas.Device]:
     return db.query(models.Device).all()
 
 
-def get_plant_data_by_id(db: Session, device_id: int) -> list[schemas.PlantData]:
+def get_plant_data_by_id(db: Session, device_id: int, limit: int) -> list[schemas.PlantData]:
     """
     Get plant data for a specific device from the database.
     
@@ -35,7 +35,7 @@ def get_plant_data_by_id(db: Session, device_id: int) -> list[schemas.PlantData]
         db: Database session to use for the query
         device_id: Identifying hash of the device for which the data shall be queried
     """
-    return db.query(models.PlantData).filter(models.Device.id == device_id).all()
+    return db.query(models.PlantData).filter(models.PlantData.device_id == device_id).order_by(desc(models.PlantData.timestamp)).limit(limit).all()
 
 
 def create_plant_data(db: Session, data: schemas.PlantDataCreate) -> models.PlantData:
@@ -56,10 +56,3 @@ def create_plant_data(db: Session, data: schemas.PlantDataCreate) -> models.Plan
     db.refresh(plant_data_record)
     return plant_data_record
 
-
-def get_by_critical_humidity(db: Session) -> list[models.Device]:
-    devices = get_devices(db)
-
-    last_val = [(device,get_plant_data_by_id(db,device.id)[-1]) for device in devices]
-
-    return [dev for dev,data in last_val if data.soil_humidity <= 30]
