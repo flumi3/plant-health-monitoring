@@ -9,6 +9,9 @@ import crud
 import schemas
 from database import engine, get_db
 
+from paho.mqtt.client import Client, MQTTMessage
+
+
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
 
@@ -41,6 +44,17 @@ async def create_device(device: schemas.DeviceCreate, db: Session = Depends(get_
 @app.post("/remove_device/{device_id}")
 async def remove_device(device_id, db: Session = Depends(get_db)):
     crud.remove_device(db,device_id)
+
+@app.post("/reset_device/{device_id}")
+async def remove_device(device_id,db: Session = Depends(get_db)):
+    client = Client("emulator")
+    client.connect("193.197.229.59")
+    devices = await read_devices(db)
+    topic = None
+    for device in devices: 
+        if device.id == int(device_id):
+            topic = device.device_hash
+    client.publish(f'/{topic}/reset',"reset")
 
 @app.get("/plant-data/{device_id}", response_model=list[schemas.PlantData])
 async def read_plant_data(device_id, db: Session = Depends(get_db), limit: int = 10):
