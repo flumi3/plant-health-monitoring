@@ -9,6 +9,9 @@ export default function DeviceForm() {
     const [deviceId, setDeviceId] = useState("");
 
     const onSubmit = () => {
+        if (deviceName === "" && deviceId === ""){
+            return;
+        }
         const base = process.env.REACT_APP_API_SERVER_URL;
         const url = base + "/devices"
         const payload = {
@@ -21,7 +24,10 @@ export default function DeviceForm() {
             headers: {
                 "Content-Type": "application/json"
             }
-        })
+        }).then(
+            ()=>window.location.reload(false)
+        )
+
     }
 
     return (
