@@ -16,10 +16,12 @@ def create_device(db: Session, device: schemas.DeviceCreate) -> models.Device:
     Returns:
         The device record that was created in the database
     """
+    print("Creating new device entry in database...")
     device_record = models.Device(**device.dict())
     db.add(device_record)
     db.commit()
     db.refresh(device_record)
+    print(device_record)
     return device_record
 
 
@@ -33,6 +35,7 @@ def get_devices(db: Session) -> List[models.Device]:
     Returns:
         The list of all devices in the database
     """
+    print("Querying all devices from database...")
     return db.query(models.Device).all()
 
 
@@ -44,6 +47,7 @@ def remove_device(db: Session, device_id: int) -> None:
         db: Database session to use for the query
         device_id: Identifying hash of the device that shall be removed
     """
+    print(f"Removing device with id {device_id} from database...")
     db.query(models.Device).filter(models.Device.id == device_id).delete()
     db.query(models.PlantData).filter(models.PlantData.device_id == device_id).delete()
     db.commit()
@@ -62,6 +66,7 @@ def get_plant_data_by_id(
     Returns:
         The plant data records that were found for the given devcie id
     """
+    print(f"Querying plant data for device with id {device_id} from database...")
     return (
         db.query(models.PlantData)
         .filter(models.PlantData.device_id == device_id)
@@ -82,6 +87,7 @@ def create_plant_data(db: Session, data: schemas.PlantDataCreate) -> models.Plan
     Returns:
         The plant data record that was created in the database
     """
+    print("Storing new plant data in database...")
     plant_data_record = models.PlantData(**data.dict())
     db.add(plant_data_record)
     db.commit()

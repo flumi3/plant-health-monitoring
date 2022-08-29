@@ -29,6 +29,7 @@ def subscribe_to_broker_topics(client: Client) -> None:
     """Subscribe to all topics in the list of topics."""
     print("Subscribing to broker topics...")
     global BROKER_TOPICS
+    print(BROKER_TOPICS)
     for topic in BROKER_TOPICS:
         client.subscribe(topic)
 
