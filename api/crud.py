@@ -1,7 +1,8 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import desc
 import schemas
 import models
+from typing import List
+from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 
 def create_device(db: Session, device: schemas.DeviceCreate) -> models.Device:
@@ -22,30 +23,58 @@ def create_device(db: Session, device: schemas.DeviceCreate) -> models.Device:
     return device_record
 
 
-def get_devices(db: Session) -> list[schemas.Device]:
-    """Queries all existing devices from the db."""
+def get_devices(db: Session) -> List[models.Device]:
+    """
+    Queries all existing devices from the db.´
+
+    Parameters:
+        db: Database session to use for the query
+
+    Returns:
+        The list of all devices in the database
+    """
     return db.query(models.Device).all()
 
-def remove_device(db:Session, device_id: int): 
+
+def remove_device(db: Session, device_id: int) -> None:
+    """
+    Removes a device from the database.
+
+    Parameters:
+        db: Database session to use for the query
+        device_id: Identifying hash of the device that shall be removed
+    """
     db.query(models.Device).filter(models.Device.id == device_id).delete()
     db.query(models.PlantData).filter(models.PlantData.device_id == device_id).delete()
     db.commit()
 
-def get_plant_data_by_id(db: Session, device_id: int, limit: int) -> list[schemas.PlantData]:
+
+def get_plant_data_by_id(
+    db: Session, device_id: int, limit: int
+) -> List[models.PlantData]:
     """
     Get plant data for a specific device from the database.
-    
+
     Parameters:
         db: Database session to use for the query
         device_id: Identifying hash of the device for which the data shall be queried
+
+    Returns:
+        The plant data records that were found for the given devcie id
     """
-    return db.query(models.PlantData).filter(models.PlantData.device_id == device_id).order_by(desc(models.PlantData.timestamp)).limit(limit).all()
+    return (
+        db.query(models.PlantData)
+        .filter(models.PlantData.device_id == device_id)
+        .order_by(desc(models.PlantData.timestamp))
+        .limit(limit)
+        .all()
+    )
 
 
 def create_plant_data(db: Session, data: schemas.PlantDataCreate) -> models.PlantData:
     """
     Create a plant data record in the database.
-    
+
     Parameters:
         db: Database session to use for creating the record
         data: Sensor data that shall be stored in the database
@@ -53,10 +82,8 @@ def create_plant_data(db: Session, data: schemas.PlantDataCreate) -> models.Plan
     Returns:
         The plant data record that was created in the database
     """
-    # TODO: create and link with device record
     plant_data_record = models.PlantData(**data.dict())
     db.add(plant_data_record)
     db.commit()
     db.refresh(plant_data_record)
     return plant_data_record
-
