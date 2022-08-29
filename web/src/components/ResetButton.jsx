@@ -8,9 +8,9 @@ export default function ResetButton(props) {
         console.log("reseted device")
         const id = props.deviceId;
         const base = process.env.REACT_APP_API_SERVER_URL;
-        const url = base + "/reset_device/" + id;
+        const url = base + "/devices/reset/" + id;
         fetch(url, {
-            method: "POST"
+            method: "POST",
         });
     }
 

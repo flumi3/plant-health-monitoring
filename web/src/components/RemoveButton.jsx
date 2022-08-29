@@ -11,9 +11,9 @@ export default function RemoveButton(props) {
         console.log("removed device")
         const id = props.deviceId;
         const base = process.env.REACT_APP_API_SERVER_URL;
-        const url = base + "/remove_device/" + id;
+        const url = base + "/devices/" + id;
         fetch(url, {
-            method: "POST"
+            method: "DELETE"
         });
         navigate("/", {replace: true});
     }
