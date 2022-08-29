@@ -14,8 +14,6 @@ services:
       - DB_PASSWORD=postgres
       - DB_HOST=host.docker.internal
       - DB_NAME=postgres
-    volumes:
-      - ./api:/api
     ports:
       - "8000:8000"
     depends_on:
@@ -48,8 +46,6 @@ services:
     environment:
       - BROKER_IP_ADDRESS=193.197.229.59
       - API_SERVER_URL=http://193.197.229.59:8000
-    volumes:
-      - ./mqtt_client:/mqtt_client
     restart: on-failure
     depends_on:
       - "api"
