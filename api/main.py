@@ -9,6 +9,7 @@ from paho.mqtt.client import Client
 import models
 import crud
 import schemas
+from settings import settings
 from database import engine, get_db
 
 app = FastAPI()
@@ -51,7 +52,7 @@ async def remove_device(device_id, db: Session = Depends(get_db)):
 async def reset_device(device_id, db: Session = Depends(get_db)):
     """Reset a device."""
     client = Client("emulator")
-    client.connect("193.197.229.59")
+    client.connect(settings.BROKER_IP_ADDRESS)
     devices = await read_devices(db)
     topic = None
     for device in devices:

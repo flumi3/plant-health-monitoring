@@ -13,6 +13,7 @@ services:
       - DB_HOST=host.docker.internal
       - DB_NAME=postgres
       - WEB_SERVER_URL=http://localhost:3000
+      - BROKER_IP_ADDRESS=193.197.229.59
     volumes:
       - ./api:/api
     ports:
@@ -36,6 +37,8 @@ services:
       - 3000
     ports: 
       - "3000:3000"
+    depends_on:
+      - api
     command: npm start 
 
   mqtt-client:
@@ -46,15 +49,15 @@ services:
     container_name: tibs-mqtt-client
     network_mode: "host"
     environment:
-      - BROKER_IP_ADDRESS=https://broker.hivemq.com:1883
+      - BROKER_IP_ADDRESS=193.197.229.59
       - API_SERVER_URL=http://localhost:8000
     volumes:
       - ./mqtt_client:/mqtt_client
     depends_on:
       - api
     restart: on-failure
-    #command: python3 mqtt_client.py
-    command: tail -F anything  # use this command if you want to keep the container alive (it shuts down upon an error)
+    command: python3 mqtt_client.py
+    #command: tail -F anything  # use this command if you want to keep the container alive (it shuts down upon an error)
 
   db:
     image: postgres:14
