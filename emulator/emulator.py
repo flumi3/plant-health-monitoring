@@ -5,6 +5,7 @@ from random import randint
 from paho.mqtt.client import Client, MQTTMessage
 
 CLIENT_ID = "EMULATOR_A"
+BROKER_ADDRESS = "193.197.229.59"
 MESSAGE = None
 
 
@@ -33,7 +34,7 @@ def on_connect(client: Client, userdata, flags: dict, rc: int):
 client = Client("emulator")
 client.on_message = on_message
 client.on_connect = on_connect
-client.connect("193.197.229.59")
+client.connect(BROKER_ADDRESS)
 
 while True:
     data = create_random_data()
