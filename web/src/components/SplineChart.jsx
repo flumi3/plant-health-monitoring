@@ -6,19 +6,19 @@ const SplineChart = (props) => {
     const options = {
         animationEnabled: true,
         title:{
-            text: "History"
+            text: "Device Data History"
         },
         axisY: {
-            title: "Feuchte",
+            title: "Humidity",
         },
         axisY2: {
-            title: "Temperatur",
+            title: "Temperature",
         },
         toolTip:{
             shared: true
         },  
         data: [{
-            name: 'Bodenfeuchte',
+            name: 'Soil Humidity',
             yValueFormatString: "##,## %",
             xValueFormatString: "DD-MMM",
             type: "spline",
@@ -26,7 +26,7 @@ const SplineChart = (props) => {
             dataPoints: props.data[0]
         },
         {
-            name: 'Luftfeuchte',
+            name: 'Air Humidity',
             yValueFormatString: "##,## %",
             xValueFormatString: "DD-MMM",
             type: "spline",
@@ -34,7 +34,7 @@ const SplineChart = (props) => {
             dataPoints: props.data[1]
         },
         {
-            name: 'Lufttemeratur',
+            name: 'Air Temperature',
             axisYType: "secondary",
             yValueFormatString: "##,## °C",
             xValueFormatString: "DD-MMM",
@@ -43,7 +43,7 @@ const SplineChart = (props) => {
             dataPoints: props.data[2]
         },
         {
-            name: 'Bodentemeratur',
+            name: 'Soil Temperature',
             axisYType: "secondary",
             yValueFormatString: "##,## °C",
             xValueFormatString: "DD-MMM",
@@ -54,7 +54,7 @@ const SplineChart = (props) => {
     ]
     }
     return (
-        <div>
+        <div className="device-data-chart">
 			<CanvasJSChart options = {options}
 				/* onRef={ref => this.chart = ref} */
 			/>

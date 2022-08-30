@@ -7,3 +7,16 @@
     padding-left: 20px;
     padding-right: 20px;
 }
+
+.device-dashboard-chart {
+    padding-top: 70px;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.device-dashboard-buttons {
+    padding-top: 100px;
+    padding-bottom: 50px;
+    max-width: 500px;
+    margin: 0 auto;
+}

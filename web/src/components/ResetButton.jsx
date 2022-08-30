@@ -15,7 +15,7 @@ export default function ResetButton(props) {
     }
 
     return (
-        <Button className="reset-button" fullWidth variant="contained" onClick={() => resetDevice()}>
+        <Button className="reset-button" fullWidth variant="contained" color="error" onClick={() => resetDevice()}>
             Reset device
         </Button>
     )

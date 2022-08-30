@@ -6,7 +6,7 @@ import ResetButton from "../components/ResetButton";
 import RemoveButton from "../components/RemoveButton";
 import "./DeviceDashboard.css";
 import SplineChart from "../components/SplineChart";
-import {ButtonGroup} from "@mui/material";
+import Grid from "@mui/material/Grid";
 
 export default function DeviceDashboard() {
     const [plantData, setPlantData] = useState([
@@ -43,27 +43,34 @@ export default function DeviceDashboard() {
                 <MeasurementCard className="soil-humidity" title="Soil Humidity" value={plantData.length === 0 ? "Nan" : plantData[0].soil_humidity + "%"} />
             </div>
             {/* TODO: pass correct identifying information that is necessary for resetting the device */}
-            <div className = "device-dashboard-data">
-            <ButtonGroup variant="contained" aria-label="outlined primary button group" >
-                <ResetButton deviceId={location.state.deviceId} />
-                <RemoveButton deviceId={location.state.deviceId} />
-            </ButtonGroup>
+            <div className="device-dashboard-chart">
+                <SplineChart data={[
+                    plantData.map((data) => {
+                        return { x: new Date(data.timestamp * 1000), y: data.soil_humidity };
+                    }),
+                    plantData.map((data) => {
+                        return { x: new Date(data.timestamp * 1000), y: data.air_humidity };
+                    }),
+                    plantData.map((data) => {
+                        return { x: new Date(data.timestamp * 1000), y: data.air_temperature };
+                    }),
+                    plantData.map((data) => {
+                        return { x: new Date(data.timestamp * 1000), y: data.soil_temperature };
+                    }),
+                ]
+                } />
             </div>
-            <SplineChart data={[
-                plantData.map((data) => {
-                    return { x: new Date(data.timestamp * 1000), y: data.soil_humidity };
-                }),
-                plantData.map((data) => {
-                    return { x: new Date(data.timestamp * 1000), y: data.air_humidity };
-                }),
-                plantData.map((data) => {
-                    return { x: new Date(data.timestamp * 1000), y: data.air_temperature };
-                }),
-                plantData.map((data) => {
-                    return { x: new Date(data.timestamp * 1000), y: data.soil_temperature };
-                }),
-            ]
-            } />
+            <div className = "device-dashboard-buttons">
+                {/* Place buttons in grid */}
+                <Grid container spacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }} >
+                    <Grid item sm={6}>
+                        <ResetButton deviceId={location.state.deviceId}/>
+                    </Grid>
+                    <Grid item sm={6}>
+                        <RemoveButton deviceId={location.state.deviceId}/>
+                    </Grid>
+                </Grid>
+            </div>
         </div>
     );
 } 

@@ -19,7 +19,7 @@ export default function RemoveButton(props) {
     }
 
     return (
-        <Button className="remove-button" fullWidth variant="contained" onClick={() => removeDevice()}>
+        <Button className="remove-button" fullWidth variant="contained" color="error" onClick={() => removeDevice()}>
             Remove device
         </Button>
     )
