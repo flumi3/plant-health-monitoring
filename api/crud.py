@@ -48,8 +48,8 @@ def remove_device(db: Session, device_id: int) -> None:
         device_id: Identifying hash of the device that shall be removed
     """
     print(f"Removing device with id {device_id} from database...")
-    db.query(models.Device).filter(models.Device.id == device_id).delete()
     db.query(models.PlantData).filter(models.PlantData.device_id == device_id).delete()
+    db.query(models.Device).filter(models.Device.id == device_id).delete()
     db.commit()
 
 

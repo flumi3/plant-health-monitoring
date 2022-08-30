@@ -79,11 +79,7 @@ client.on_message = on_message
 # connect to broker and start execution loop
 client.connect(BROKER_IP_ADDRESS)
 client.loop_start()
-old_broker_topics = BROKER_TOPICS
 while True:
     init_broker_topics()
-    if len(old_broker_topics) != len(BROKER_TOPICS):
-        print("Broker topics changed. Subscribing to new topics...")
-        subscribe_to_broker_topics(client)
-    old_broker_topics = BROKER_TOPICS
+    subscribe_to_broker_topics(client)
     time.sleep(5)
