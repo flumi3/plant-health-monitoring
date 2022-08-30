@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button } from "@mui/material";
-import "./ResetButton.css";
 
 export default function ResetButton(props) {
 

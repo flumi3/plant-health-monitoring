@@ -1,6 +1,5 @@
 import * as React from 'react';
 import { Button } from "@mui/material";
-import "./RemoveButton.css";
 import { useNavigate } from "react-router-dom";
 
 
