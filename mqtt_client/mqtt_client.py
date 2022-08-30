@@ -76,7 +76,7 @@ client = Client("tibs-mqtt-client")
 client.on_connect = on_connect
 client.on_message = on_message
 
-# connect to broker and
+# connect to broker and start execution loop
 client.connect(BROKER_IP_ADDRESS)
 client.loop_start()
 old_broker_topics = BROKER_TOPICS

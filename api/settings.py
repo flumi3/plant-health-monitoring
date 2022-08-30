@@ -1,10 +1,9 @@
-from distutils.debug import DEBUG
-from lib2to3.pytree import Base
 import os
 from pydantic import BaseSettings
 
 
 class Settings(BaseSettings):
+    DEBUG = os.getenv("DEBUG", True)
 
     # Database settings
     DB_USER = os.getenv("DB_USER")
