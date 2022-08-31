@@ -229,9 +229,9 @@ Konfiguration der Docker-Compose-File (docker-compose.yaml) eingetragen werden.
 
 Dies muss über die folgenden Umgebungsvariablen getan werden:
 
-![](docs/compose-api.png)
+![fig:5](docs/compose-api.png)
 
-![](docs/compose-mqtt-client.png)
+![fig:6](docs/compose-mqtt-client.png)
 
 ### Backend
 Im Root-Ordner des Projekts folgenden Befehl ausführen 
