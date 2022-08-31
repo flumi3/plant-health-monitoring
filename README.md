@@ -71,6 +71,8 @@ Diese wird dafür genutzt für jedes Gerät ein exclusives Topic zu erzeugen.
 Das Topic über welches die Daten gesendet werden, ist in der Form 
 /\<Chip-ID>/plant_data.
 
+![fig:2](docs/iot_device.png)
+
 ### Reset
 
 Um das Gerät auf die Werkseinstellungen zurück zu setzen, sendet man diesem
@@ -81,10 +83,8 @@ Dann ist es dazu veranlasst, seine Konfiguration zu löschen.
 
 ### Over-the-air Update (OTA)
 
-Um Firmware-Updates möglichst komfortabel zu gestallten werden diese über das Backend an die Geräte ausgliefert. 
-Dazu fragt ein Gerät bei jedem Neustart die akutelle Firmware-Version vom Server ab und vergleicht diese mit der eigenen. Da Firmware-Versionen fortlaufend aufsteigend vergeben werden, ist der Vergleich sehr einfach. Ist die installierte Versionsnummer kleiner als die vom Server bereitgestellte lädt das Gerät die neue Firmware herunter und installiert diese. 
-
-![fig:2](docs/iot_device.png)
+Um Firmware-Updates möglichst komfortabel zu gestalten, werden diese über das Backend an die Geräte ausgliefert. 
+Dazu fragt ein Gerät bei jedem Neustart die aktuelle Firmware-Version vom Server ab und vergleicht diese mit der Eigenen. Da Firmware-Versionen fortlaufend aufsteigend vergeben werden, ist der Vergleich sehr einfach. Ist die installierte Versionsnummer kleiner als die vom Server bereitgestellte lädt das Gerät die neue Firmware herunter und installiert diese. 
 
 ## MQTT-Broker
 
@@ -162,9 +162,9 @@ Der Alexa Skill dient der schnellen Interaktion mit dem System.
 Mittels der Komandos "Wie geht es meinen Pflanzen" oder auf simple weiße mit 
 dem Wort "Status" kann mit dem Skill interagiert werden. 
 Dieser fragt im Hintergrund ab, welche Pflanzen im System registriert sind und 
-fragt jeweils den letzten Datensatz am Backend ab. 
+ruft den letzten Datensatz im Backend ab. 
 Um die Interaktionen kurz zu halten, werden die Informationen auf das wichtigste
-Kirterium, die Bodenfeuchte, reduziert. 
+Kriterium, die Bodenfeuchte, reduziert. 
 Liegt diese bei einer Pflanze unter 30 %, gibt Alexa den Hinweis darauf, dass diese
 Wasser benötigt. 
 Sind alle Werte der Bodenfeuchte >30 %, meldet der Skill, dass es allen Pflanzen gut geht.  
@@ -204,11 +204,28 @@ Im Ordner **web** das Shell-Skript **start.sh** ausführen.
 
 # Nutzerhandbuch
 
-## Gerät hinzufügen
+## Konfiguration des IOT-Geräts
 
-Um ein neues Gerät hinzuzufügen benötigt muss zum einen 
-ein Name für das Gerät angegeben werden. 
-Dieser kann frei gewählt werden. Dieser ist es auch welchen der Alexa Skill verwendent. 
+Für die Nutzung des Geräts ist eine WLAN-Verbindung notwendig. Um diese einzurichten öffnet das Gerät zunächst einen eigenen WiFi-Access-Point. 
+Über diesen kann man sich mittels eines PCs oder Smartphones verbinden und auf die Konfigurationsseite gelangen.   
+Das Standartpasswort ist: 0123456789  
+Dort findet sich unter anderem auch die Geräte-ID wieder. 
+Unter dem Punkt **Configure WiFi** findet sich die Möglichkeit dem Gerät die Login-Daten zu einem WiFi-AP zu übermittel. 
+
+![fig:8](docs/setup_screen.png)
+
+Dort findet sich eine Liste der erkannten WiFi-APs wieder. 
+Über ein Formular kann die gewünschte SSID und das zugehörige Passwort eingegeben werden. 
+Zusätzlich kann dort der zu verwendende MQTT-Broker spezifiziert werden. 
+Nachdem die Konfiguration gespeichert wurde, versucht sich das Gerät mit dem angegebenen AP zu verbinden. 
+Sollte dies scheitern, hält das Gerät seinen eigenen AP offen, um die Konfiguration fortzusetzen. 
+
+![fig:9](docs/config_wifi_mqtt.png)
+
+## Hinzufügen eines Geräts in der Web-Applikation
+
+Um ein neues Gerät hinzuzufügen, muss ein Name für das Gerät angegeben werden. 
+Dieser kann frei gewählt werden und wird auch vom Alexa Skill verwendent. 
 Der andere anzugebende Parameter ist die Device-ID. Diese dient dazu ein Gerät eindeutig zu 
 identifizieren und die Daten, welche das Gerät sendet zuzuordnen. 
 ![fig:5](docs/add_device.png)
@@ -225,7 +242,7 @@ Klickt man auf eines dieser Listen-Items wird man auf die Detailansicht weiterge
 
 <br> 
 
-## Detailansicht
+## Detailansicht eines IOT-Geräts
 
 Die Detailansicht dient dazu die vom jeweiligen Gerät gesendeten Daten darzustellen. 
 Zum einen in Form von Kacheln werden die zuletzt gesendeten Daten angezeigt.
@@ -233,28 +250,9 @@ Unterhalb dessen werden die Daten in einem Historischen Verlauf angezeigt.
 Derzeit, werden hier die lezten 10 vom Gerät gesendeten Daten als Line-Chart visualisiert. 
 Die in der Grafik dargestellten Daten wirken chaotisch, da sie durch einen Emulator erzeugt wurden, welcher zufällige Daten erzeugt. 
 
-In der Detailansicht finden sich zudem zwei Button um zum einen das Gerät zurück zu setzten und zum anderen das Gerät gänzlich auch dem System zu entfernen. Dabei werden zudem alle von dem Gerät gesendeten Daten aus der Datenbank gelöscht. 
+In der Detailansicht finden sich zudem zwei Buttons, um zum einen das Gerät zurückzusetzten und zum anderen das Gerät gänzlich aus dem System zu entfernen. Dabei werden zudem alle von dem Gerät gesendeten Daten aus der Datenbank gelöscht. 
 
 ![fig:7](docs/device_details.png)
-
-
-## Greät konfigurieren
-
-Für die Nutzung des Geräts ist eine  WLAN-Verbindung notwendig. Um diese einzurichten öffnet das Gerät zunächst einen eigenen WiFi-Access-Point. 
-Über diesen kann man sich mittels eines PCs oder Smartphones verbinden und auf die Konfigurationsseite gelangen.   
-Das Standartpasswort ist: 0123456789  
-Dort findet sich unter anderem auch die Geräte-ID wieder. 
-Unter dem Punkt **Configure WiFi** findet sich die Möglichkeit dem Gerät die Login-Daten zu einem WiFi-AP zu übermittel. 
-
-![fig:8](docs/setup_screen.png)
-
-Dort findet sich eine Liste der erkannten WiFi-APs wieder. 
-Über ein Formular kann die gewünschte SSID und das zugehörige Passwort eingegeben werden. 
-Zusätzlich kann dort der zu verwendende MQTT-Broker spezifiziert werden. 
-Nachdem die Konfiguration gespeichert wurde, veruscht sich das Gerät mit dem angegebenen AP zu verbinden. 
-Sollte dies scheitern wird hält das Gerät seinen eigenen AP offen, um die Konfiguration fortzusetzen. 
-
-![fig:9](docs/config_wifi_mqtt.png)
 
 # OLD STUFF
 
