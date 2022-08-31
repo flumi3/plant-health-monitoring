@@ -1,6 +1,59 @@
-# tibs
+# Technische internetbasierte Systeme - Projekt zur Überwachung der Pflanzengesundheit
+Axel Stark, MATRIKELNUMMER  
+Sebastian Flum, 76855
 
 ## TODO:
+
+1. Generelle Funktionsbeschreibung / Übersicht vom Projekt
+2. Architektur erklären
+3. Auf Komponenten eingehen
+4. Benutzerhandbuch mit Bilder (swagger docs auch mit rein)
+5. Getting started
+  - Entwicklungsumgebung
+  - Produktumgebung
+
+<br>
+
+# Projektbeschreibung
+
+Ziel dieses Projekts ist die Überwachung der Gesundheit von Pflanzen durch
+ein technisches, internetbasiertes System.
+
+Das hierbei entwickelte System ermöglicht es dem Nutzer, einen mit Sensoren
+bestückten Mikrokontroller bei der Pflanze zu platzieren, welcher wichtige
+Informationen zum Pflanzenstatus abfrägt. Folgende Daten werden von dem
+Mikrokontroller gesammelt und in einem Web-Dashboard angezeigt:
+
+- Bodentemperatur
+- Bodenfeuchte
+- Lufttemperatur
+- Luftfeuchte
+
+Durch die Registrierung des Geräts in einer Web-Applikation, kann der Nutzer
+dabei die aktuellen Messwerte auslesen und historische Messwerte in einem
+Liniendiagramm anzeigen lassen.
+
+Neben dem Abfragen der Daten durch die Web-Applikation hat der Nutzer
+außerdem die Möglichkeit, die oben genannten Daten durch einen Alexa-Skill
+abzufragen, wodurch er beispielsweise schnell und einfach entscheiden kann,
+ob die Pflanze gegossen werden muss und ob die Pflanze sich in ihrer optimalen
+Wachstumsumgebung befindet.
+
+<br>
+
+# Systemarchitektur
+
+<br>
+
+# Installation und Ausführung
+
+<br>
+
+# Nutzerhandbuch
+
+
+
+
 
 ## Getting started
 
