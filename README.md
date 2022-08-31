@@ -1,5 +1,5 @@
 # Technische internetbasierte Systeme - Projekt zur Überwachung der Pflanzengesundheit
-Axel Stark, MATRIKELNUMMER  
+Axel Stark, 74399  
 Sebastian Flum, 76855
 
 ## TODO:
@@ -54,24 +54,39 @@ Für die Umsetzung des Projekts wurde folgende Systemarchitektur entworfen:
 
 ## IOT-Gerät
 
-TODO: eventuell überarbeiten oder ausbessern mit deinem Wissen
-
 Wie bereits erwähnt, ist das IOT-Gerät der bei der Pflanze anzubringende
-Mikrokontroller bestehend aus einem ESP32 und einem ESP8266. Am
+Mikrokontroller bestehend aus einem ESP8266. Am
 Mikrokontroller angebracht sind die zur Datensammlung benötigten Sensoren
 für Bodenfeuchte und Bodentemperatur sowie Luftfeuchte und Lufttemperatur.
-Zusätzlich am Gerät angebracht ist eine Batterie, da es in der Nähe der meisten
+Der entwickelte Prototyp benötigt hierfür noch eine Spannungsversorgung 
+mittels eines USB-Kabels. Für die Zuknunft wäre angedacht das System mittels 
+einer Batterie zu betreiben, da es in der Nähe der meisten
 Pflanzen keine Möglichkeit zur Spannungsversorgung per Steckdose gibt.
 
 Der Mikrokontroller sammelt die im vorherigen
 Kapitel beschriebenen Daten und sendet diese mithilfe des
 MQTT-Netzwerkprotokolls an einen zugehörigen MQTT-Broker.
+Dabei besitzt jedes Gerät eine eindeutige ID, beispielsweiße die Chip-ID des ESP8266. 
+Diese wird dafür genutzt für jedes Gerät ein exclusives Topic zu erzeugen. 
+Das Topic über welches die Daten gesendet werden, ist in der Form 
+/\<Chip-ID>/plant_data.
+
+### Reset
+
+Um das Gerät auf die Werkseinstellungen zurück zu setzen, sendet man diesem
+eine MQTT-Nachricht über das Topic /\<Chip-ID>/reset. 
+Der Inhalt der übertragenen Nachricht ist dabei irrelevant, sie kann auch leer sein.
+Es ist lediglich notwendig, dass das Gerät auf diesem Topic einen Nachricht erhält. 
+Dann ist es dazu veranlasst, seine Konfiguration zu löschen. 
+
+### Over-the-air Update (OTA)
+
+Um Firmware-Updates möglichst komfortabel zu gestallten werden diese über das Backend an die Geräte ausgliefert. 
+Dazu fragt ein Gerät bei jedem Neustart die akutelle Firmware-Version vom Server ab und vergleicht diese mit der eigenen. Da Firmware-Versionen fortlaufend aufsteigend vergeben werden, ist der Vergleich sehr einfach. Ist die installierte Versionsnummer kleiner als die vom Server bereitgestellte lädt das Gerät die neue Firmware herunter und installiert diese. 
 
 ![fig:2](docs/iot_device.png)
 
 ## MQTT-Broker
-
-TODO: broker beschreibung mit deinem wissen ergänzen/ausbessern
 
 Der MQTT-Broker dient dem Datenaustausch zwischen dem IOT-Gerät und dem
 Backend. Er empfängt veröffentlichte Nachrichten (Sensordaten), filtert die
@@ -143,26 +158,103 @@ bereitgestellten Endpunkte.
 
 ## Alexa Skill
 
-TODO: alexa skill beschreiben
+Der Alexa Skill dient der schnellen Interaktion mit dem System. 
+Mittels der Komandos "Wie geht es meinen Pflanzen" oder auf simple weiße mit 
+dem Wort "Status" kann mit dem Skill interagiert werden. 
+Dieser fragt im Hintergrund ab, welche Pflanzen im System registriert sind und 
+fragt jeweils den letzten Datensatz am Backend ab. 
+Um die Interaktionen kurz zu halten, werden die Informationen auf das wichtigste
+Kirterium, die Bodenfeuchte, reduziert. 
+Liegt diese bei einer Pflanze unter 30 %, gibt Alexa den Hinweis darauf, dass diese
+Wasser benötigt. 
+Sind alle Werte der Bodenfeuchte >30 %, meldet der Skill, dass es allen Pflanzen gut geht.  
 
 
 <br>
 
 # Installation und Ausführung
 
+## Requirements
+- [Docker & Docker-Compose]
+- [Node.js]
+- [Python]
+- [Mosquitto]
+
+[Docker & Docker-Compose]: https://www.docker.com/
+[Node.js]: https://nodejs.org/en/
+[Python]: https://www.python.org/
+[Mosquitto]: https://mosquitto.org/
+
+## Startup
+### Backend
+Im Root-Ordner des Projekts folgenden Befehl ausführen 
+```console
+<project-folder>$ docker-compose up 
+```
+
+### Frontend
+Im Ordner **web** das Shell-Skript **start.sh** ausführen. 
+``` console
+<project-folder>/web$ ./start.sh
+```
+
+
+
 <br>
 
 # Nutzerhandbuch
 
-TODO: screenshots im produktivbetrieb machen  
-- Hinzufügen von Gerät
-- Geräteliste von echtem device
-- Detailansicht mit daten von echtem device
+## Gerät hinzufügen
 
-TODO: bild von device wie es bei der pflanze angebracht wird oder so lol :D provisorisch würde ja reichen
+Um ein neues Gerät hinzuzufügen benötigt muss zum einen 
+ein Name für das Gerät angegeben werden. 
+Dieser kann frei gewählt werden. Dieser ist es auch welchen der Alexa Skill verwendent. 
+Der andere anzugebende Parameter ist die Device-ID. Diese dient dazu ein Gerät eindeutig zu 
+identifizieren und die Daten, welche das Gerät sendet zuzuordnen. 
+![fig:5](docs/add_device.png)
+
+<br> 
+
+## Geräteliste
+
+Unterhalb des Formulars zum hinzufügen von neuen Gerätes werden die bestehenden Geräte gelistet. 
+Hier finden sich auch die beiden Angaben *Device Name* und *Device ID* wieder. 
+Klickt man auf eines dieser Listen-Items wird man auf die Detailansicht weitergeleitet.
+
+![fig:6](docs/device_list.png)
+
+<br> 
+
+## Detailansicht
+
+Die Detailansicht dient dazu die vom jeweiligen Gerät gesendeten Daten darzustellen. 
+Zum einen in Form von Kacheln werden die zuletzt gesendeten Daten angezeigt.
+Unterhalb dessen werden die Daten in einem Historischen Verlauf angezeigt. 
+Derzeit, werden hier die lezten 10 vom Gerät gesendeten Daten als Line-Chart visualisiert. 
+Die in der Grafik dargestellten Daten wirken chaotisch, da sie durch einen Emulator erzeugt wurden, welcher zufällige Daten erzeugt. 
+
+In der Detailansicht finden sich zudem zwei Button um zum einen das Gerät zurück zu setzten und zum anderen das Gerät gänzlich auch dem System zu entfernen. Dabei werden zudem alle von dem Gerät gesendeten Daten aus der Datenbank gelöscht. 
+
+![fig:7](docs/device_details.png)
 
 
+## Greät konfigurieren
 
+Für die Nutzung des Geräts ist eine  WLAN-Verbindung notwendig. Um diese einzurichten öffnet das Gerät zunächst einen eigenen WiFi-Access-Point. 
+Über diesen kann man sich mittels eines PCs oder Smartphones verbinden und auf die Konfigurationsseite gelangen.   
+Das Standartpasswort ist: 0123456789  
+Dort findet sich unter anderem auch die Geräte-ID wieder. 
+Unter dem Punkt **Configure WiFi** findet sich die Möglichkeit dem Gerät die Login-Daten zu einem WiFi-AP zu übermittel. 
+
+![fig:8](docs/setup_screen.png)
+
+Dort findet sich eine Liste der erkannten WiFi-APs wieder. 
+Über ein Formular kann die gewünschte SSID und das zugehörige Passwort eingegeben werden. 
+Zusätzlich kann dort der zu verwendende MQTT-Broker spezifiziert werden. 
+Nachdem die Konfiguration gespeichert wurde, veruscht sich das Gerät mit dem angegebenen AP zu verbinden. 
+Sollte dies scheitern wird hält das Gerät seinen eigenen AP offen, um die Konfiguration fortzusetzen. 
+
+![fig:9](docs/config_wifi_mqtt.png)
 
 # OLD STUFF
 
