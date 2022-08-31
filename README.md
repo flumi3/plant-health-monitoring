@@ -2,21 +2,6 @@
 Axel Stark, 74399  
 Sebastian Flum, 76855
 
-## TODO:
-
-1. Generelle Funktionsbeschreibung / Übersicht vom Projekt
-2. Architektur erklären
-3. Auf Komponenten eingehen
-4. Benutzerhandbuch mit Bilder (swagger docs auch mit rein)
-5. Getting started
-  - Entwicklungsumgebung
-  - Produktumgebung
-
-- Bild zur Systemarchitektur überarbeiten (Fragezeichen entfernen, etc.)
-- Beispielbild mit Mikrokontroller in Pflanze platziert
-  
-
-
 <br>
 
 # Projektbeschreibung
@@ -174,7 +159,7 @@ Sind alle Werte der Bodenfeuchte >30 %, meldet der Skill, dass es allen Pflanzen
 
 # Installation und Ausführung
 
-## Requirements
+### Requirements
 - [Docker & Docker-Compose]
 - [Node.js]
 - [Python]
@@ -207,12 +192,12 @@ muss.
 ### Aufsetzen der Entwicklungsumgebung
 
 #### Bauen der Container
-```shell
+```console
 docker compose -f docker-compose.dev.yaml build
 ```
 
 #### Einrichten des Emulators
-```shell
+```console
 <project-folder>/emulator$ python -m venv <name-der-virtuellen-umgebung>
 <project-folder>/emulator$ source <name-der-virtuellen-umgebung>/bin/active
 <project-folder>/emulator$ pip install -r requirements.txt
@@ -221,13 +206,13 @@ docker compose -f docker-compose.dev.yaml build
 ### Starten der Anwendung
 
 #### Starten des Emulators
-```shell
+```console
 <project-folder>/emulator$ source <name-der-virtuellen-umgebung>/bin/active
 <project-folder>/emulator$ python emulator.py
 ```
 
 #### Starten der Anwendung
-```shell
+```console
 <project-folder>$ docker compose -f docker-compose.dev.yaml up  # dev
 ```
 
