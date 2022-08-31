@@ -185,7 +185,58 @@ Sind alle Werte der Bodenfeuchte >30 %, meldet der Skill, dass es allen Pflanzen
 [Python]: https://www.python.org/
 [Mosquitto]: https://mosquitto.org/
 
-## Startup
+## Entwicklunsumgebung
+
+Um eine komfortable Entwicklung zu ermöglichen gibt es neben der
+Produktivumgebung auch eine Entwicklungsumgebung. Folgende Komponenten laufen
+dabei in unabhängigen Docker Containern:
+
+- Python API (tibs-api)
+- MQTT Client (tibs-mqtt-client)
+- React Web Applikation (tibs-web)
+- PostgresSQL Datenbank
+- Graphische Web-Applikation zum Anzeigen der Datenbank
+
+Um alle Container reibungslos und in der richtigen Konfiguration starten zu
+können, bündelt eine Docker-Compose-File (docker-compose.dev.yaml) alle Container mit ihren Einstellungen.
+
+Um eine Datenbeschaffung durch ein IOT-Gerät simulieren zu können, wurde ein
+Emulator entwickelt, welcher auf dem Computer des Entwicklers ausgeführt werden
+muss.
+
+### Aufsetzen der Entwicklungsumgebung
+
+#### Bauen der Container
+```shell
+docker compose -f docker-compose.dev.yaml build
+```
+
+#### Einrichten des Emulators
+```shell
+<project-folder>/emulator$ python -m venv <name-der-virtuellen-umgebung>
+<project-folder>/emulator$ source <name-der-virtuellen-umgebung>/bin/active
+<project-folder>/emulator$ pip install -r requirements.txt
+```
+
+### Starten der Anwendung
+
+#### Starten des Emulators
+```shell
+<project-folder>/emulator$ source <name-der-virtuellen-umgebung>/bin/active
+<project-folder>/emulator$ python emulator.py
+```
+
+#### Starten der Anwendung
+```shell
+<project-folder>$ docker compose -f docker-compose.dev.yaml up  # dev
+```
+
+## Produktivumgebung
+
+Soll die Anwendung in der Produktivumgebung (auf einem Server) gestartet werden,
+geschieht dies zum einen über eine Docker-Compose-File für das Backend
+und zum anderen über ein Bash-Skript zum Starten des Frontends.
+
 ### Backend
 Im Root-Ordner des Projekts folgenden Befehl ausführen 
 ```console
@@ -194,7 +245,7 @@ Im Root-Ordner des Projekts folgenden Befehl ausführen
 
 ### Frontend
 Im Ordner **web** das Shell-Skript **start.sh** ausführen. 
-``` console
+```console
 <project-folder>/web$ ./start.sh
 ```
 
