@@ -154,7 +154,12 @@ TODO: alexa skill beschreiben
 
 # Nutzerhandbuch
 
-TODO: screenshots im produktivbetrieb machen
+TODO: screenshots im produktivbetrieb machen  
+- Hinzufügen von Gerät
+- Geräteliste von echtem device
+- Detailansicht mit daten von echtem device
+
+TODO: bild von device wie es bei der pflanze angebracht wird oder so lol :D provisorisch würde ja reichen
 
 
 
