@@ -189,38 +189,49 @@ Um eine Datenbeschaffung durch ein IOT-Gerät simulieren zu können, wurde ein
 Emulator entwickelt, welcher auf dem Computer des Entwicklers ausgeführt werden
 muss.
 
-### Aufsetzen der Entwicklungsumgebung
-
-#### Bauen der Container
-```console
-docker compose -f docker-compose.dev.yaml build
-```
-
-#### Einrichten des Emulators
+### Einrichten des Emulators
 ```console
 <project-folder>/emulator$ python -m venv <name-der-virtuellen-umgebung>
 <project-folder>/emulator$ source <name-der-virtuellen-umgebung>/bin/active
 <project-folder>/emulator$ pip install -r requirements.txt
 ```
 
-### Starten der Anwendung
-
-#### Starten des Emulators
+### Starten des Emulators
 ```console
 <project-folder>/emulator$ source <name-der-virtuellen-umgebung>/bin/active
 <project-folder>/emulator$ python emulator.py
 ```
 
-#### Starten der Anwendung
+### Starten der Container
 ```console
 <project-folder>$ docker compose -f docker-compose.dev.yaml up  # dev
 ```
+
+### Aufrufen der Komponenten
+Die einzelnen Komponenten können über folgende URLs aufgerufen werden:
+
+**Backend**: http://localhost:8000/docs  
+**Frontend**: http://localhost:3000  
+**Datenbank GUI**: http://localhost:8081
+
 
 ## Produktivumgebung
 
 Soll die Anwendung in der Produktivumgebung (auf einem Server) gestartet werden,
 geschieht dies zum einen über eine Docker-Compose-File für das Backend
 und zum anderen über ein Bash-Skript zum Starten des Frontends.
+
+### Einrichten der Produktivumgebung
+
+Möchte man die Anwendung im Internet bereitstellen, muss die Anwendung auf
+einem Server gestartet werden. Dazu muss die IP-Adresse des Servers in der
+Konfiguration der Docker-Compose-File (docker-compose.yaml) eingetragen werden.
+
+Dies muss über die folgenden Umgebungsvariablen getan werden:
+
+![](docs/compose-api.png)
+
+![](docs/compose-mqtt-client.png)
 
 ### Backend
 Im Root-Ordner des Projekts folgenden Befehl ausführen 
@@ -233,7 +244,6 @@ Im Ordner **web** das Shell-Skript **start.sh** ausführen.
 ```console
 <project-folder>/web$ ./start.sh
 ```
-
 
 
 <br>
@@ -289,101 +299,3 @@ Die in der Grafik dargestellten Daten wirken chaotisch, da sie durch einen Emula
 In der Detailansicht finden sich zudem zwei Buttons, um zum einen das Gerät zurückzusetzten und zum anderen das Gerät gänzlich aus dem System zu entfernen. Dabei werden zudem alle von dem Gerät gesendeten Daten aus der Datenbank gelöscht. 
 
 ![fig:7](docs/device_details.png)
-
-# OLD STUFF
-
-
-## Getting started
-
-### Building the app
-```shell
-docker compose -f docker-compose.dev.yaml build  # dev
-docker compose build  # prod
-```
-
-### Starting the app
-```shell
-docker compose -f docker-compose.dev.yaml up  # dev
-docker compose up  # prod
-```
-
-### Backend
-- Add device table to db:
-  - Attributes: Name, Device ID und irgend einen primary key für Mapping mit
-    den Daten
-  - Endpoint für Hinzufügen von neuem Gerät
-
-### Frontend
-- Drawer mit 2 Drawern die einen zu den folgenden Seiten führen:
-  - Geräteübersicht wo man Geräte hinzufügen und auswählen kann (Startseite)
-  - Dashboard eines Geräts wo man die jeweiligen Daten sieht
-
-### Alexa
-- Find out how development works
-
-### Docker compose
-- create docker compose for prod and mostly since we need to set different environment variables in prod
-  (backend url, database connection, etc...)
-
-
-## Pflanzen Überwachung
-
-### Alexa
-
-- Errinerung zum  gießen
-  - Statusleuchte von Alexa
-- Gesundheitsstatus abfragen
-  - Bodenfeuchte
-  - Bodentemperatur
-  - Lufttemperatur
-
-### Web-UI
-
-- Daten anzeigen im zeitlichen verlauf (Dashboard)
-- Aktuelle Werte Anzeigen
-- Gießhistorie
-
-### IOT-Gerät
-
-- Gießen registrieren (Wenn Bodenfeuchte schnell steigt)
-- Werte erfassen (15 min Takt)
-  - Lufttemp.
-  - Bodentemp.
-  - Bodenfeuchte
-- MQTT an DB versenden
-- OTA-Update
-  - Wöchentlich/Täglich fragen ob neue Firmware version vorhanden, gegebenenfalls updaten
-- WIFI-Config
-  - Hotspot aufmachen -> mit Hotspot verbinden -> WIFI-Cridentials eingeben
-
-### Datenbank
-
-- SQL
-
-### HTTP-Server
-
-- Python
-  - FAST-API
-  - SQL-Alchemy
-
-### MQTT Broker
-
-- Self-Hosted oder Bantel-Server
-
-### Update-Server
-
-- evtl. einfacher File-Server
-
-### Backend allgemein
-
-- Microservices in Docker-Containern
-
-## Architektur
-![alt text](./docs/Architecture.png)
-
-https://www.dlr.rlp.de/Internet/global/themen.nsf/b81d6f06b181d7e7c1256e920051ac19/6449e62b480fcb10c1257d5f0034e7b5?OpenDocument
-
-
-## MQTT 
-User: plantData
-Pass: plantdatatibs
